@@ -1,0 +1,1839 @@
+arpf:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    customizedSoftAc:
+      enabled: false
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    arpf:
+      imageName: nokia-udm-arpf
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    softac:
+      imageName: nokia-udm-softac-cust-std
+      pullPolicy: IfNotPresent
+      softacRegistry: ""
+      tag: 3.1.3-10
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  networks:
+    acreencryptionLan:
+      enabled: true
+    hsm1Lan:
+      enabled: true
+    hsm2Lan:
+      enabled: true
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 1
+  priorityClass:
+    enabled: true
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+ccasapache:
+  admin:
+    image:
+      pullPolicy: IfNotPresent
+      registry: udm-docker-candidates.repo.lab.pl.alcatel-lucent.com
+      repository: nokia-udm-kubectl
+      tag: v1.22.12-nano-20220729
+  cassandra:
+    replicaStaggerFactor: 10
+  certmgr:
+    image:
+      name: nokia-udm-certmgr
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    fbit:
+      imageName: nokia-udm-lfsclient
+      pullPolicy: IfNotPresent
+      tag: 1.19.147
+    pullPolicy: IfNotPresent
+    registry: udm-docker-candidates.repo.lab.pl.alcatel-lucent.com
+    repository: nokia-udm-ccas_apache
+    tag: 4.1.1-0.1602
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    uds:
+      imageName: nokia-udm-udscasschema
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  minconfig:
+    Enabled: false
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 1
+  priorityClass:
+    enabled: true
+  replicaCount: 3
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  unifiedLogging:
+    syslog:
+      enabled: true
+      host: ztslenvoylbservice.zts5g.svc.cluster.local
+clustermonitoragent:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    fbit:
+      imageName: nokia-udm-lfsclient
+      pullPolicy: IfNotPresent
+      tag: 1.19.147
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    uhc:
+      imageName: nokia-udm-uhc
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    ztsclustermonitoragent:
+      imageName: nokia-udm-ztsclustermonitoragent
+      pullPolicy: IfNotPresent
+      tag: 1.19.145
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 100%
+  priorityClass:
+    enabled: true
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: 25%
+    maxUnavailable: 25%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  ztstrackerpassword: ""
+  ztstrackersecret:
+    enabled: false
+    secretname: <ZTS_TRACKER_SECRET>
+  ztstrackerusername: ""
+crdbredisio:
+  admin:
+    image:
+      name: nokia-udm-crdb-admin
+      pullPolicy: IfNotPresent
+      tag: 5.2-4.3860
+    nodeSelector: {}
+    pdb:
+      maxUnavailable: 100%
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 0
+      value: ""
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 0
+      value: ""
+  certmgr:
+    image:
+      name: nokia-udm-certmgr
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  cluster:
+    shardCount: 3
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+  nodeAntiAffinity: soft
+  priorityClass:
+    enabled: true
+  rolemon:
+    image:
+      name: nokia-udm-rolemon
+      pullPolicy: IfNotPresent
+      tag: 5.2-4.3860
+  server:
+    count: 6
+    image:
+      name: nokia-udm-redisio
+      pullPolicy: IfNotPresent
+      tag: 5.2-4.3860
+    nodeSelector: {}
+    pdb:
+      minAvailable: 50%
+    tolerations:
+    - effect: NoExecute
+      key: node.kubernetes.io/not-ready
+      operator: Exists
+      tolerationSeconds: 0
+      value: ""
+    - effect: NoExecute
+      key: node.kubernetes.io/unreachable
+      operator: Exists
+      tolerationSeconds: 0
+      value: ""
+  unifiedLogging:
+    syslog:
+      enabled: true
+      host: ztslenvoylbservice.zts5g.svc.cluster.local
+debugassist:
+  customLabels:
+    podLabels: {}
+  enabled: false
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    debugassist:
+      imageName: nokia-udm-debugassist
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    fbit:
+      imageName: nokia-udm-lfsclient
+      pullPolicy: IfNotPresent
+      tag: 1.19.147
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 1
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+ee:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    ee:
+      imageName: nokia-udm-ee
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+global:
+  awsIpMgmt:
+    enabled: false
+    imageName: nokia-aws-ip-manager
+    imageTag: 3.5.0
+    runAsUser: 147
+  caservicefqdn: caserverservice.zts5g.svc.cluster.local.
+  clustername: zts1
+  cnfHealthCheck:
+    cpuThreshold: 80
+    enabled: false
+    memThreshold: 80
+  compaas:
+    ExternalDnsIp: 10.67.30.48
+    ExternalDnsPort: 53
+    enabled: false
+    ztsnamespace: default
+    ztspassword: am96V1h1Y24=
+    ztsusername: enRzMXp0c3NlY3JldA==
+  containerNamePrefix: ""
+  crdb:
+    connectionEnabled: true
+    tlsEnabled: true
+  customLabels: {}
+  datacenter: dc1
+  enableCassandraTls: false
+  enableClusterMonitorAgent: true
+  enableCpuMemUsageCollect: true
+  enableKeyMgmt: false
+  enablePodDisruptionBudget: true
+  enableSidfForAusf: false
+  enableSst: false
+  enableSysPtraceCap: true
+  ephemeralStorageLimits:
+    enabled: false
+    maxContainerLogSize: 300
+  epsReleaseVersion: 23.8.0
+  externalCertAuthority:
+    certs:
+    - applicationName: UDMSDM
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-sdm.nokia.com
+      timeToLive: 365
+    - applicationName: UDMEE
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-ee.nokia.com
+      timeToLive: 365
+    - applicationName: UDMMT
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-mt.nokia.com
+      timeToLive: 365
+    - applicationName: UDMNIDD
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-niddau.nokia.com
+      timeToLive: 365
+    - applicationName: UDMPP
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-pp.nokia.com
+      timeToLive: 365
+    - applicationName: UDMUECM
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-uecm.nokia.com
+      timeToLive: 365
+    - applicationName: UDMUEAUTH
+      caCert: LDAPCACert
+      caName: ""
+      cert: LDAPCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: LDAPCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-ueau.nokia.com
+      timeToLive: 365
+    - applicationName: ARPF
+      caCert: AcReencryptCACert
+      caName: ""
+      cert: AcReencryptCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: AcReencryptPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:arpf.nokia.com
+      timeToLive: 365
+    - applicationName: ARPF
+      caCert: AcKeyServCACert
+      caName: ""
+      cert: AcKeyServCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: AcKeyServPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:arpf.nokia.com
+      timeToLive: 365
+    - applicationName: ARPF
+      caCert: SmcKeyServiceCACert
+      caName: ""
+      cert: SmcKeyServiceCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SmcKeyServicePrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:arpf.nokia.com
+      timeToLive: 365
+    - applicationName: UDMTRIGGER
+      caCert: TriggerServiceCACert
+      caName: ""
+      cert: TriggerServiceCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: TriggerServicePrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:udmtrigger.nokia.com
+      timeToLive: 365
+    - applicationName: HTTP2LB
+      caCert: H2pCaCert
+      caName: ""
+      cert: H2pServCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H2pServPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:http2lb.nokia.com
+      timeToLive: 365
+    - applicationName: HTTP2LB
+      caCert: H2pCliCaCert
+      caName: ""
+      cert: H2pCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H2pCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:http2lb.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: H1pServCaCert
+      caName: ""
+      cert: H1pServCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H1pServPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: H1pCliCaCert
+      caName: ""
+      cert: H1pCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H1pCliPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: SIMCAAltCert
+      caName: ""
+      cert: H1pServCertAlt
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H1pServPrivKeyAlt
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: SIMCliAltCACert
+      caName: ""
+      cert: H1pCliCertAlt
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: H1pCliPrivKeyAlt
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: TcpClCaCert
+      caName: ""
+      cert: TcpClPubCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: TcpClPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSIM
+      caCert: ServerRootCA
+      caName: ""
+      cert: ServerRootCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: ServerRootPrivKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:sim.nokia.com
+      timeToLive: 365
+    - applicationName: UDMUECM
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-uecm.nokia.com
+      timeToLive: 365
+    - applicationName: UDMSDM
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-sdm.nokia.com
+      timeToLive: 365
+    - applicationName: UDMEE
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-ee.nokia.com
+      timeToLive: 365
+    - applicationName: UDMMT
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-mt.nokia.com
+      timeToLive: 365
+    - applicationName: UDMNIDD
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-niddau.nokia.com
+      timeToLive: 365
+    - applicationName: UDMPP
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-pp.nokia.com
+      timeToLive: 365
+    - applicationName: UDMUEAUTH
+      caCert: SDLDiscSrvCA
+      caName: ""
+      cert: SDLDiscCliCert
+      certOverwrite: true
+      extendedKeyUsage: ""
+      keySize: "2048"
+      keyUsage: ""
+      privateKey: SDLDiscCliKey
+      subject: /C=IN/O=Nokia/CN=nokia.com
+      subjectAltName: DNS:nudm-ueau.nokia.com
+      timeToLive: 365
+    enabled: false
+  healthCheckCli:
+    cliServerPort: 30325
+    enableCliTls: true
+  imagePullSecrets: []
+  ipv6:
+    externalInterfaces:
+      enabled: false
+    internalInterfaces:
+      enabled: false
+  isXIXEnabled: true
+  kubernetesDnsDomain: cluster.local
+  kve:
+    enabled: false
+  lanNames:
+    acreencryptionLanName: acreencryptionlan
+    hsm1LanName: hsm1lan
+    hsm2LanName: hsm2lan
+    lbHttp2LanName: lbhttp2lan
+    ldapLanName: ldaplan
+    liLanName: lilan
+    liX1LanName: lix1lan
+    triggerLanName: triggerlan
+  miniudm:
+    CMIP: 0.0.0.0
+    enabled: false
+  nudrDr:
+    enableSdsCaching: true
+    enabled: false
+  podNamePrefix: ""
+  podSecurityContext:
+    enabled: true
+    securityContext:
+      fsGroup: 2000
+      runAsUser: 2000
+  rbac:
+    customPsp:
+      enabled: false
+      pspName: <PSP_NAME>
+    customRbac:
+      serviceAccountName: <SERVICE_ACCOUNT_NAME>
+      serviceAccountNameForJobs: <SERVICE_ACCOUNT_NAME_FOR_JOBS>
+    enableRbacCreation: true
+    podSecurityControllerType: opa
+    scc:
+      name: <SCC_NAME>
+  rbacSecretFetch:
+    enabled: false
+    isSimEnabled: true
+  readinessCheckOnCrdbFailure:
+    enabled: false
+  readinessHttpProbes:
+    enableLivenessHttpProbes: true
+    enabled: true
+  redisLocalCache:
+    enabled: true
+  registry: udm-docker-candidates.repo.lab.pl.alcatel-lucent.com
+  sbiErrorLogConfig:
+    appLogDirectory: /logstore/AppErrLog
+    appLoggerFilename: sbiAppErrorLog
+    fileTimeoutSeconds: 43200
+    flushTimeoutSeconds: 120
+  sbiTls:
+    enablePlaintextSupport: false
+    enabled: false
+  sdsLocalCache:
+    disperseInterval: 10
+  security:
+    networkFirewall:
+      enabled: false
+  serviceFqdns:
+    ausfNfFqdn: ""
+    ausfSorFqdn: ""
+    ausfUeauthFqdn: ""
+    ausfUpuFqdn: ""
+    eeFqdn: ""
+    interPlmnFqdns:
+      ausfNfFqdn: ausf.5gc.mnc000.mcc000.3gppnetwork.org
+      ausfSorFqdn: ausfsor.5gc.mnc000.mcc000.3gppnetwork.org
+      ausfUeauthFqdn: ausfueauth.5gc.mnc000.mcc000.3gppnetwork.org
+      ausfUpuFqdn: ausfupu.5gc.mnc000.mcc000.3gppnetwork.org
+      eeFqdn: udmee.5gc.mnc000.mcc000.3gppnetwork.org
+      enabled: true
+      mtFqdn: udmmt.5gc.mnc000.mcc000.3gppnetwork.org
+      niddFqdn: udmnidd.5gc.mnc000.mcc000.3gppnetwork.org
+      nimFqdn: udmnim.5gc.mnc000.mcc000.3gppnetwork.org
+      ppFqdn: udmpp.5gc.mnc000.mcc000.3gppnetwork.org
+      sdmFqdn: udmsdm.5gc.mnc000.mcc000.3gppnetwork.org
+      udmNfFqdn: udm.5gc.mnc000.mcc000.3gppnetwork.org
+      udmUeauthFqdn: udmueauth.5gc.mnc000.mcc000.3gppnetwork.org
+      uecmFqdn: udmuecm.5gc.mnc000.mcc000.3gppnetwork.org
+    mtFqdn: ""
+    niddFqdn: ""
+    nimFqdn: ""
+    ppFqdn: ""
+    sdmFqdn: ""
+    udmNfFqdn: ""
+    udmUeauthFqdn: ""
+    uecmFqdn: ""
+  storageClass: csi-cephfs
+  storeDnsCacheNfRegInfoInCdb:
+    enabled: true
+  timeZone: UTC
+  traceConfig:
+    enabled: false
+    thirdPartyAnalyzerAddr: <THIRD_PARTY_ANALYZER_ADDR>
+    thirdPartyAnalyzerPort: <THIRD_PARTY_ANALYZER_PORT>
+    useTls: true
+  vnfMajorRelease: "23"
+  vnfMinorRelease: "8.0"
+  vnfname: udm2
+  ztslenvoylbfqdn: ztslenvoylbservice.zts5g.svc.cluster.local.
+  ztsvnfname: zts1
+http2lb:
+  circuitBreakerLimits:
+    ee: 40000
+    egress: 40000
+    egressTls: 40000
+    mt: 40000
+    nidd: 40000
+    nim: 40000
+    pp: 40000
+    sdm: 40000
+    sorprotection: 40000
+    udmueauthn: 40000
+    ueauthn: 40000
+    uecm: 40000
+    upuprotection: 40000
+  customLabels:
+    podLabels: {}
+  egress:
+    idleConnTimeout: 3600
+  enabled: true
+  environment:
+    concurrency: 8
+    duvalue: udm2
+    releasevalue: 1
+  externalTls:
+    clientTls:
+      cipherSuites:
+      - ECDHE-ECDSA-AES128-GCM-SHA256
+      - ECDHE-ECDSA-AES256-GCM-SHA384
+      - ECDHE-RSA-AES256-GCM-SHA384
+      ecdhCurves:
+      - P-256
+      enableCertRevokeCheck: false
+      enableCertValidation: true
+      maxTlsVersion: TLSv1_2
+      minTlsVersion: TLSv1_2
+      sanValidation:
+        enabled: false
+        exactMatchSanList: []
+        regexMatchSanList: []
+      sni:
+        autoSni:
+          autoSanValidation: false
+          enabled: false
+        customSni:
+          enabled: false
+          sniHostname: <SNI_HOST_NAME>
+    serverTls:
+      cipherSuites:
+      - ECDHE-ECDSA-AES128-GCM-SHA256
+      - ECDHE-ECDSA-AES256-GCM-SHA384
+      - ECDHE-RSA-AES256-GCM-SHA384
+      ecdhCurves:
+      - P-256
+      enableCertRevokeCheck: false
+      enableCertValidation: true
+      maxTlsVersion: TLSv1_2
+      minTlsVersion: TLSv1_2
+      sanValidation:
+        enabled: false
+        exactMatchSanList: []
+        regexMatchSanList: []
+  http2ProtocolOptions:
+    maxConcurrentStreams: 10000
+  image:
+    http2lb:
+      imageName: nokia-udm-http2lb
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    http2lbmgmt:
+      imageName: nokia-udm-http2lb-mgmt
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    http2lbservicereg:
+      imageName: nokia-udm-http2lb-servicereg
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  ingress:
+    plaintext:
+      listenPort: 8080
+    tls:
+      listenPort: 8443
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 1
+  priorityClass:
+    enabled: true
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+lcm:
+  aifEnabled: "True"
+  customLabels:
+    podLabels: {}
+  enableSecretProvisioningDuringInstall: true
+  enableSecretProvisioningDuringUpgrade: true
+  enabled: true
+  image:
+    imagePullPolicy: IfNotPresent
+    imageTag: NGCAL2311045
+    name: nokia-udm-lcmhook
+  loghandlerJob: enable
+  netactMrName: MRC-1/MR-1
+  netactPlmn: PLMN-PLMN
+  postDeleteJob: enable
+  postInstallJob: enable
+  postRollbackJob: enable
+  postUpgradeCmProvisioningJob:
+    enabled: false
+    image:
+      imageName: nokia-udm-cmprovhook
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    netconfPort: <NETCONF_PORT>
+    netconfSecretName: <NETCONF_SECRET_NAME>
+  postUpgradeJob: enable
+  preDeleteJob: enable
+  preInstallJob: enable
+  preProvision:
+    enabled: false
+    relativePathOfNetconfXmlOnRepository: '##TARGET_NEAR_UPLOAD_PATH##/CONFIGURATION/netconf_data.xml'
+    relativePathOfSecretsOnRepository: '##TARGET_NEAR_UPLOAD_PATH##/CONFIGURATION/udmsecrets.tar'
+    secretName: <edge-repo-secret-name>
+    secureProvisionEnabled: false
+  preRollbackJob: enable
+  preUpgradeJob: enable
+  vnfid: udm2
+  ztsentrypoint: ztslenvoylbservice.zts5g.svc.cluster.local
+  ztslcmpassword: User@1234
+  ztslcmsecret: <ZTSL_LCM_SECRET>
+  ztslcmusername: zts1user
+  ztsnamespace: zts5g
+mt:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    mt:
+      imageName: nokia-udm-mt
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+nidd:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    nidd:
+      imageName: nokia-udm-nidd
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+nim:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    leaderElector:
+      imageName: nokia-udm-leader-elector
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    nim:
+      imageName: nokia-udm-nim
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  leaderElector:
+    ttlInSeconds: 4
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  priorityClass:
+    enabled: true
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+pp:
+  customLabels:
+    podLabels: {}
+  enabled: false
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    pp:
+      imageName: nokia-udm-pp
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+sdm:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    sdm:
+      imageName: nokia-udm-sdm
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+sidf:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    sidf:
+      imageName: nokia-udm-sidf
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 1
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+sim:
+  X2PduBufferingEnabled: true
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    coredump: disabled
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 3
+    minReplicas: 2
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    httpcs:
+      imageName: nokia-udm-httpcs
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    leaderElector:
+      imageName: nokia-udm-leader-elector
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    sim:
+      imageName: nokia-udm-sim
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    transporter:
+      imageName: nokia-udm-transporter
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    xix:
+      imageName: nokia-udm-xix
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  leaderElector:
+    ttlInSeconds: 4
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 1
+  priorityClass:
+    enabled: true
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+sor:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    sor:
+      imageName: nokia-ausf-sor
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+tcpproxy:
+  circuitBreakerLimits:
+    maxConnections: 10
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    tcpproxy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    tcpproxymgmt:
+      imageName: nokia-udm-tcpproxy-mgmt
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  ingress:
+    listenPort: 7443
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 100%
+  priorityClass:
+    enabled: true
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+trigger:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    trigger:
+      imageName: nokia-udm-trigger
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 50%
+  priorityClass:
+    enabled: true
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+udmueauth:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    ueauth:
+      imageName: nokia-udm-ueauth
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+ueauthn:
+  cdbMigrationJob:
+    enabled: false
+    image:
+      imageName: nokia-udm-cmprovhook
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    initImage:
+      imageName: nokia-udm-lcmhook
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    netconfPort: <NETCONF_PORT>
+    netconfSecretName: <NETCONF_SECRET_NAME>
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    ueauth:
+      imageName: nokia-ausf-ueauth
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+uecm:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    uecm:
+      imageName: nokia-udm-uecm
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector:
+  - key: is_edge
+    value: "true"
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: is_edge
+    operator: Equal
+    value: "true"
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+upu:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  hpa:
+    enabled: false
+    maxReplicas: 2
+    minReplicas: 1
+    scaleDown:
+      periodSeconds: 60
+      policies:
+        percent: 5
+        pods: 1
+      selectPolicy: Max
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      periodSeconds: 100
+      policies:
+        percent: 10
+        pods: 2
+      selectPolicy: Max
+      stabilizationWindowSeconds: 30
+    useCpu:
+      targetAvgUtilization: 60
+  image:
+    cip:
+      imageName: nokia-udm-cip
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    oam:
+      imageName: nokia-udm-oam
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+    upu:
+      imageName: nokia-ausf-upu
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 20%
+  replicaCount: 1
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+vnfclusterenvoylb:
+  customLabels:
+    podLabels: {}
+  enabled: true
+  environment:
+    duvalue: udm2
+    releasevalue: 1
+  image:
+    fbit:
+      imageName: nokia-udm-lfsclient
+      pullPolicy: IfNotPresent
+      tag: 1.19.147
+    udmenvoy:
+      imageName: nokia-udm-udmenvoy
+      pullPolicy: IfNotPresent
+      tag: NGCAL2311045
+  nodeSelector: []
+  podDisruptionBudget:
+    maxUnavailable: 50%
+  replicaCount: 2
+  rollingUpdateParams:
+    maxSurge: "0"
+    maxUnavailable: 20%
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 0
+    value: ""
