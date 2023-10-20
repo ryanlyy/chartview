@@ -2,7 +2,7 @@
 
 RB_REMOTE_ROOT=https://repo.cci.nokia.net/artifactory/list/udm-generic-candidates/NEAR/AUSF/
 OUTPUT_ROOT=/var/www/html/ryliu/udm/chartview/
-WORK_ROOT=./chartview/
+WORK_ROOT=$(pwd)
 VALUE_YAML=$WORK_ROOT/values.yaml
 CHART_WORK_DIR=$WORK_ROOT/work/
 CHART_TEMPLATE_DIR=$CHART_WORK_DIR/templates/
@@ -40,7 +40,6 @@ down_load_udm_chart_unzip()
 	chartview_log "Downloading $CHART_URL in $CHART_WORK_DIR..."
 	curl --silent $CHART_URL -o $CHART_DIR_NAME
 	cd $CHART_WORK_DIR
-	ls $CHART_WORK_DIR
 	chartview_log "unzip $CHART_NAME..."
 	tar zxf $CHART_NAME
 }
