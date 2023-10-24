@@ -238,7 +238,7 @@ crdbredisio:
 debugassist:
   customLabels:
     podLabels: {}
-  enabled: false
+  enabled: true
   environment:
     duvalue: udm2
     releasevalue: 1
@@ -1152,7 +1152,7 @@ nim:
 pp:
   customLabels:
     podLabels: {}
-  enabled: false
+  enabled: true
   environment:
     duvalue: udm2
     releasevalue: 1

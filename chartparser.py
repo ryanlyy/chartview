@@ -30,6 +30,7 @@ chartsYamlFile = chartsAllRoot +  "udm-helm-chart.yaml"
 # Global definitions
 kubeWorkloadList = ["Deployment", "StatefulSet", "Job"]
 kubeWorkloadDaemonList = ['Deployment', 'StatefulSet']
+kubeWorkloadContainerTypeList = ['containers', 'initContainers']
 
 #Global Variable to store Resources from ChartsYamlFile
 kubeApiKindDicts = {}
@@ -51,6 +52,12 @@ def getResourceList(kind):
 
 def boldStr(s):
     return  '\033[1m' + s + '\033[0m'
+
+def removeReleaseName(resName):
+    if resName[:len("release-name-")] == "release-name-":
+        return resName[len("release-name-"):]
+    else:
+        return resName
 
 def printTitle(tabCnt, paraCnt, *argv):
     tabStr = "\t" * tabCnt
@@ -190,6 +197,114 @@ def show_secret():
     for secret in secretList:
         print("%50s\t%10s\t%s" %(secret['metadata']['name'], secret['type'], str(secret['metadata']['labels']['app.kubernetes.io/name'])))
 
+def show_nodeselector():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+                
+        for kubePod in kubePodList:
+            containerNameStr = "" 
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            if 'nodeSelector' not in kubePod['spec']['template']['spec'].keys():
+                print('nodeSelector is None')
+                continue
+            print("%s\t%s" %("pod.nodeSelector", str(kubePod['spec']['template']['spec']['nodeSelector'])))
+            print()
+
+def show_tolerations():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+                
+        for kubePod in kubePodList:
+            containerNameStr = "" 
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            if 'tolerations' not in kubePod['spec']['template']['spec'].keys():
+                print('tolerations is None')
+                continue
+            print("%s\t%s" %("pod.tolerations", str(kubePod['spec']['template']['spec']['tolerations'])))
+            print()
+
+def show_cpus():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+                
+        for kubePod in kubePodList:
+            print("%s" %('-'*120))
+            print("%50s\t%20s\t%15s\t%10s\t%s" %("Pod", "Container", "Container Type", "Limit", "Requests"))
+            print("%s" %('-'*120))
+
+            containerNameStr = "" 
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            #print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            totalLimit = 0
+            totalRequests = 0
+            for containerType in kubeWorkloadContainerTypeList:
+                if containerType in kubePod['spec']['template']['spec'].keys():
+                    kubeContainerList = kubePod['spec']['template']['spec'][containerType]
+                    for kubeContainer in kubeContainerList:
+                        containerName = kubeContainer['name']
+                        containerResource = kubeContainer['resources']
+                        containerLimit = containerResource['limits']['cpu']
+                        containerRequests = containerResource['requests']['cpu']
+                        if containerType == 'containers':
+                            totalLimit = totalLimit + int(containerLimit[:-1])
+                            totalRequests = totalRequests + int(containerRequests[:-1])
+                        print("%50s\t%20s\t%15s\t%10s\t%s" %(kubeWorkloadName, containerName, containerType, containerLimit, containerRequests)) 
+            print("%50s\t%20s\t%15s\t%10s\t%s" %("-"*len(kubeWorkloadName), "-"*len("sum(containers)"), "", "-"*len(containerLimit), "-"*len(containerRequests)))
+            print("%50s\t%20s\t%15s\t%10dm\t%dm\n" %(kubeWorkloadName, "sum(containers)", "", totalLimit, totalRequests))
+ 
+def show_memory():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+                
+        for kubePod in kubePodList:
+            print("%s" %('-'*100))
+            print("%30s\t%20s\t%15s\t%10s\t%s" %("Pod", "Container", "Container Type", "Limit", "Requests"))
+            print("%s" %('-'*100))
+            
+            containerNameStr = "" 
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            #print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            totalLimit = 0
+            totalRequests = 0
+            for containerType in kubeWorkloadContainerTypeList:
+                if containerType in kubePod['spec']['template']['spec'].keys():
+                    kubeContainerList = kubePod['spec']['template']['spec'][containerType]
+                    for kubeContainer in kubeContainerList:
+                        containerName = kubeContainer['name']
+                        containerName = removeReleaseName(containerName)
+                        containerResource = kubeContainer['resources']
+                        containerLimit = containerResource['limits']['memory']
+                        containerRequests = containerResource['requests']['memory']
+                        if containerType == 'containers':
+                            tempLimit = int(containerLimit[:-2])
+                            tempRequests = int(containerRequests[:-2])
+                            if containerLimit[-2:] == "Gi":
+                                tempLimit = tempLimit * 1024
+                            if containerRequests[-2:] == "Gi":
+                                tempRequests = tempRequests * 1024
+                            totalLimit = totalLimit + tempLimit
+                            totalRequests = totalRequests + tempRequests
+                        print("%30s\t%20s\t%15s\t%10s\t%s" %(kubeWorkloadName, containerName, containerType, containerLimit, containerRequests)) 
+            print("%30s\t%20s\t%15s\t%10s\t%s" %("-"*len(kubeWorkloadName), "-"*len("sum(containers)"), "", "-"*len(containerLimit), "-"*len(containerRequests)))
+            print("%30s\t%20s\t%15s\t%10dMi\t%dMi\n" %(kubeWorkloadName, "sum(containers)", "", totalLimit, totalRequests))
+
+def show_disks():
+    pass
 
 #print("Loadding " + chartsYamlFile)
 #Loading AUSF/UDM Manifests
@@ -232,5 +347,15 @@ elif sys.argv[1] == 'show_role':
     show_role()
 elif sys.argv[1] == 'show_secret':
     show_secret()
+elif sys.argv[1] == 'show_tolerations':
+    show_tolerations()
+elif sys.argv[1] == 'show_nodeselector':
+    show_nodeselector()
+elif sys.argv[1] == 'show_cpus':
+    show_cpus()
+elif sys.argv[1] == 'show_memory':
+    show_memory()
+elif sys.argv[1] == 'show_disks':
+    show_disks()
 else:
     chartparser_usage()
