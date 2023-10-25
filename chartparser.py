@@ -28,6 +28,7 @@ def chartparser_usage():
     print("%20s:\t%s" %("show_images", "used to show all containers image policy"))
     print("%20s:\t%s" %("show_services", "used to show all services")) 
     print("%20s:\t%s" %("show_others", "used to show others info"))
+    exit()
 
 # get the current working directory
 workRootDir = os.getcwd()
@@ -735,7 +736,17 @@ chartParserMenu = {
     23: ("help", chartparser_usage)
 }
 
-releaseList = os.listdir(chartsTemplateRootDir)
+if len(sys.argv) > 1:
+    if sys.argv[1] == 'help':
+        chartparser_usage()
+
+try:
+    releaseList = os.listdir(chartsTemplateRootDir)
+except:
+    print("You need to download your helm charts firstly using below command, and then try again")
+    print("\t./chartview.sh")
+    exit()
+
 count = 1
 print("-"*30)
 for release in releaseList:

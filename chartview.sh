@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-HELM_CHARTS_URL_ROOT="chart url path"
+HELM_CHARTS_URL_ROOT="url to chart"
 
 PUBLISH_ROOT_DIR=/var/www/html/ryliu/udm/chartview/
 
@@ -24,14 +24,14 @@ chartview_log()
 
 #Remove temp files
 if [[ ! -d $CHART_WORK_DIR ]]; then
-	mkdir $CHART_WORK_DIR24
+	mkdir -p $CHART_WORK_DIR
 
 fi
 if [[ ! -d $CHART_DOWNLOAD_DIR ]]; then
-	mkdir $CHART_DOWNLOAD_DIR
+	mkdir -p $CHART_DOWNLOAD_DIR
 fi
 if [[ ! -d $CHART_TEMPLATE_DIR ]]; then 
-	mkdir $CHART_TEMPLATE_DIR
+	mkdir -p $CHART_TEMPLATE_DIR
 fi
 
 list_helm_chart()
