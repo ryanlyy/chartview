@@ -28,21 +28,11 @@ def chartparser_usage():
     print("%20s:\t%s" %("show_images", "used to show all containers image policy"))
     print("%20s:\t%s" %("show_services", "used to show all services")) 
     print("%20s:\t%s" %("show_others", "used to show others info"))
-     
-
-if len(sys.argv) == 1: 
-    chartparser_usage()
-    exit()
-
-if sys.argv[1] == "help":
-    chartparser_usage()
-    exit()
 
 # get the current working directory
 workRootDir = os.getcwd()
-chartsAllRoot = workRootDir + "/work/templates/"
-chartsDirRoot = workRootDir + "/work/templates/reg-helm-charts/charts/"
-chartsYamlFile = chartsAllRoot +  "udm-helm-chart.yaml"
+chartsTemplateRootDir = workRootDir + "/work/templates/"
+chartsYamlFile = "udm-helm-chart.yaml"
 
 # Global definitions
 kubeWorkloadList = ["Deployment", "StatefulSet", "Job"]
@@ -666,34 +656,126 @@ def show_services():
             print("%10s\t%30s\t%25s\t%20s\t%20s\t%s" %(kubeKind, svcName,  podName, svcType, svcClusterIP, svcPublishNotReadyAddresses))
         print("")
 
-#print("Loadding " + chartsYamlFile)
-#Loading AUSF/UDM Manifests
-with open(chartsYamlFile, 'r') as file:
-    udmHelmCharts = yaml.safe_load_all(file)
-    for helmChart in udmHelmCharts:
-        if helmChart is None or len(helmChart) == 0:
-            continue
+def show_all():
+    show_kind_apiversion()
+    show_kube_resources()
+    show_securitycontext()
+    show_pdb()
+    show_role()
+    show_secret()
+    show_tolerations()
+    show_nodeselector()
+    show_cpus()
+    show_memory()
+    show_disks()
+    show_probes()
+    show_labels()
+    show_affinity()
+    show_volumes()
+    show_upgrade()
+    show_networks()
+    show_images()
+    show_lifecycle()
+    show_services()
+    show_others()
 
-        kubeApi = helmChart['apiVersion']
-        kubeKind = helmChart['kind']
-        
-        #Popuate the kind and api supported by AUSF/UDM
-        kubeApiKind =  kubeKind + ": " + kubeApi
-        if kubeKind not in kubeApiKindDicts.keys():
-            kubeApiKindDicts[kubeKind] = kubeApi
+def loadChartYamlFile(yamlFile):
+    print("Loadding " + yamlFile + "...")
+    #Loading AUSF/UDM Manifests
+    with open(yamlFile, 'r') as file:
+        udmHelmCharts = yaml.safe_load_all(file)
+        for helmChart in udmHelmCharts:
+            if helmChart is None or len(helmChart) == 0:
+                continue
 
-        #Popuate the Resource supported by AUSF/UDM
-        if  kubeKind in kubeResourceDicts.keys():
-            kubeResourceDicts[kubeKind].append(helmChart)
-        else:
-            kubeResourceDicts[kubeKind] = []
-            kubeResourceDicts[kubeKind].append(helmChart)
-        
-        #Popuate the pod Labels information
-        if kubeKind in kubeWorkloadDaemonList:
-            kubePodLabels = helmChart['metadata']['labels']
-            kubePodName = helmChart['metadata']['name']
-            kubePodLablesDicts[kubePodName] = kubePodLabels
+            kubeApi = helmChart['apiVersion']
+            kubeKind = helmChart['kind']
+            
+            #Popuate the kind and api supported by AUSF/UDM
+            kubeApiKind =  kubeKind + ": " + kubeApi
+            if kubeKind not in kubeApiKindDicts.keys():
+                kubeApiKindDicts[kubeKind] = kubeApi
+
+            #Popuate the Resource supported by AUSF/UDM
+            if  kubeKind in kubeResourceDicts.keys():
+                kubeResourceDicts[kubeKind].append(helmChart)
+            else:
+                kubeResourceDicts[kubeKind] = []
+                kubeResourceDicts[kubeKind].append(helmChart)
+            
+            #Popuate the pod Labels information
+            if kubeKind in kubeWorkloadDaemonList:
+                kubePodLabels = helmChart['metadata']['labels']
+                kubePodName = helmChart['metadata']['name']
+                kubePodLablesDicts[kubePodName] = kubePodLabels
+
+chartParserMenu = {
+    1: ("show_kind_apiversion", show_kind_apiversion),
+    2: ("show_kube_resources", show_kube_resources),
+    3: ("show_securitycontext", show_securitycontext),
+    4: ("show_pdb", show_pdb),
+    5: ("show_role", show_role),
+    6: ("show_secret", show_secret),
+    7: ("show_tolerations", show_tolerations),
+    8: ("show_nodeselector", show_nodeselector),
+    9: ("show_cpus", show_cpus),
+    10: ("show_memory", show_memory),
+    11: ("show_disks", show_disks),
+    12: ("show_probes", show_probes),
+    13: ("show_labels", show_labels),
+    14: ("show_affinity", show_affinity),
+    15: ("show_volumes", show_volumes),
+    16: ("show_upgrade", show_upgrade),
+    17: ("show_networks", show_networks),
+    18: ("show_images", show_images),
+    19: ("show_lifecycle", show_lifecycle),
+    20: ("show_services", show_services),
+    21: ("show_others", show_others),
+    22: ("show_all", show_all),
+    23: ("help", chartparser_usage)
+}
+
+releaseList = os.listdir(chartsTemplateRootDir)
+count = 1
+print("-"*30)
+for release in releaseList:
+    print("\t%d: %s" %(count, release))
+    count = count + 1
+print("-"*30)
+userInput = input("Enter a release version and press enter:> ")
+releaseSelected = releaseList[userInput - 1]
+
+buildList = os.listdir(chartsTemplateRootDir + "/" + releaseSelected + "/")
+count = 1
+print("-"*50)
+for build in buildList:
+    print("\t%d: %s" %(count, build))
+    count = count + 1
+print("-"*50)
+userInput = input("Enter a build version and press enter:> ")
+buildSelected = buildList[userInput - 1]
+
+yamlFile = chartsTemplateRootDir + "/" + releaseSelected + "/" + buildSelected + "/" + chartsYamlFile
+
+loadChartYamlFile(yamlFile)
+
+if len(sys.argv) == 1: 
+    while 1: 
+        print("-" * 50)
+        print("MENU:")
+        print("-" * 50)
+        for key in sorted(chartParserMenu.keys()):
+            print("\t" + str(key) + ": " + chartParserMenu[key][0])
+        print("-"*50)
+        try:
+            userInput = input("Enter a operation and press enter:> ")
+        except:
+            print("")
+            exit()
+        #print("-"*20 + chartParserMenu[str(useInput)][0] + "-"*20)
+        #print(userInput)
+        chartParserMenu[userInput][1]()
+    exit()
 
 if sys.argv[1] == "show_kind_apiversion":
     show_kind_apiversion()
@@ -738,26 +820,8 @@ elif sys.argv[1] == 'show_services':
 elif sys.argv[1] == 'show_others':  
     show_others()
 elif sys.argv[1] == 'show_all':
-    show_kind_apiversion()
-    show_kube_resources()
-    show_securitycontext()
-    show_pdb()
-    show_role()
-    show_secret()
-    show_tolerations()
-    show_nodeselector()
-    show_cpus()
-    show_memory()
-    show_disks()
-    show_probes()
-    show_labels()
-    show_affinity()
-    show_volumes()
-    show_upgrade()
-    show_networks()
-    show_images()
-    show_lifecycle()
-    show_services()
-    show_others()
+    show_all()
+elif sys.argv[1] == "help":
+    chartparser_usage()
 else:
     chartparser_usage()
