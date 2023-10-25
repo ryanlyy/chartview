@@ -6,12 +6,29 @@ def chartparser_usage():
     print(sys.argv[0] + " is used to explore CNF Helm Charts for feature analysis")
     print("Usage: " + sys.argv[0] + "  <cmd>")
     print("cmd: ")
+    print("%20s:\t%s" %('show_all', 'used to show all resources by CNF'))
     print("%20s:\t%s" %('show_kind_apiversion', 'used to show all kind and apiversion supported by CNF'))
     print("%20s:\t%s" %("show_kube_resources", "used to show all Resources supported by CNF"))
     print("%20s:\t%s" %("show_securitycontext", "used to show all pod/container securityContext"))
     print("%20s:\t%s" %("show_pdb", "used to show all pdb info"))
     print("%20s:\t%s" %("show_role", "used to show all role info"))
     print("%20s:\t%s" %("show_secret", "used to show all secrets"))
+    print("%20s:\t%s" %("show_tolerations", "used to show all telerations"))
+    print("%20s:\t%s" %("show_nodeselector", "used to show all nodeSelector"))
+    print("%20s:\t%s" %("show_cpus", "used to show all CPU"))
+    print("%20s:\t%s" %("show_memory", "used to show all MEMORY"))
+    print("%20s:\t%s" %("show_disks", "used to show all disk"))
+    print("%20s:\t%s" %("show_probes", "used to show all probles"))
+    print("%20s:\t%s" %("show_labels", "used to show all labels"))
+    print("%20s:\t%s" %("show_affinity", "used to show all affinity"))
+    print("%20s:\t%s" %("show_volumes", "used to show all volumes"))  
+    print("%20s:\t%s" %("show_upgrade", "used to show all upgrade strategy")) 
+    print("%20s:\t%s" %("show_networks", "used to show all networks"))   
+    print("%20s:\t%s" %("show_lifecycle", "used to show all containers lifecycle"))
+    print("%20s:\t%s" %("show_images", "used to show all containers image policy"))
+    print("%20s:\t%s" %("show_services", "used to show all services")) 
+    print("%20s:\t%s" %("show_others", "used to show others info"))
+     
 
 if len(sys.argv) == 1: 
     chartparser_usage()
@@ -239,7 +256,7 @@ def show_cpus():
                 
         for kubePod in kubePodList:
             print("%s" %('-'*120))
-            print("%50s\t%20s\t%15s\t%10s\t%s" %("Pod", "Container", "Container Type", "Limit", "Requests"))
+            print("%30s\t%20s\t%15s\t%10s\t%s" %("Pod", "Container", "Container Type", "Limit", "Requests"))
             print("%s" %('-'*120))
 
             containerNameStr = "" 
@@ -259,9 +276,9 @@ def show_cpus():
                         if containerType == 'containers':
                             totalLimit = totalLimit + int(containerLimit[:-1])
                             totalRequests = totalRequests + int(containerRequests[:-1])
-                        print("%50s\t%20s\t%15s\t%10s\t%s" %(kubeWorkloadName, containerName, containerType, containerLimit, containerRequests)) 
-            print("%50s\t%20s\t%15s\t%10s\t%s" %("-"*len(kubeWorkloadName), "-"*len("sum(containers)"), "", "-"*len(containerLimit), "-"*len(containerRequests)))
-            print("%50s\t%20s\t%15s\t%10dm\t%dm\n" %(kubeWorkloadName, "sum(containers)", "", totalLimit, totalRequests))
+                        print("%30s\t%20s\t%15s\t%10s\t%s" %(kubeWorkloadName, containerName, containerType, containerLimit, containerRequests)) 
+            print("%30s\t%20s\t%15s\t%10s\t%s" %("-"*len(kubeWorkloadName), "-"*len("sum(containers)"), "", "-"*len(containerLimit), "-"*len(containerRequests)))
+            print("%30s\t%20s\t%15s\t%10dm\t%dm\n" %(kubeWorkloadName, "sum(containers)", "", totalLimit, totalRequests))
  
 def show_memory():
     for kubeKind in kubeResourceDicts.keys():
@@ -305,6 +322,349 @@ def show_memory():
 
 def show_disks():
     pass
+
+def show_probes():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadDaemonList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+                
+        for kubePod in kubePodList:
+            print("%s" %('-'*100))
+            print("%30s\t%20s\t%10s\t%s" %("Pod", "Container", "ProbeType", "Probe"))
+            print("%s" %('-'*100))
+            containerNameStr = "" 
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            #print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            totalLimit = 0
+            totalRequests = 0
+            for containerType in kubeWorkloadContainerTypeList:
+                if containerType == 'initContainers':
+                    continue
+                if containerType in kubePod['spec']['template']['spec'].keys():
+                    kubeContainerList = kubePod['spec']['template']['spec'][containerType]
+                    for kubeContainer in kubeContainerList:
+                        containerName = kubeContainer['name']
+                        containerName = removeReleaseName(containerName)
+                        containerReadiness = 'NoneProbe'
+                        containerLiveness = 'NoneProbe'
+                        if 'readinessProbe' in kubeContainer.keys():
+                            containerReadiness = kubeContainer['readinessProbe']
+                        if 'livenessProbe' in kubeContainer.keys():
+                            containerLiveness = kubeContainer['livenessProbe']
+                        print("%30s\t%20s\t%10s\t%s" %(kubeWorkloadName, containerName, 'livenessProbe', containerLiveness)) 
+                        print("%30s\t%20s\t%10s\t%s" %(kubeWorkloadName, containerName, 'readinessProbe', containerReadiness)) 
+                        if containerLiveness == containerReadiness:
+                            print("%30s\t%20s\t%10s\t%s" %("", "", "", "livenessProbe = readinessProbe"))
+                        else:
+                            print("%30s\t%20s\t%10s\t%s" %("", "", "", "livenessProbe != readinessProbe"))
+
+def show_labels():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            kubeResList = kubeResourceDicts[kubeKind]  
+            print("%s" %('-'*100))
+            print("%20s\t%40s\t%s" %("Kind", "Name", "Labels"))
+            print("%s" %('-'*100))  
+            for kubeRes in kubeResList:
+                resName = kubeRes['metadata']['name']
+                resName = removeReleaseName(resName)
+                if 'labels' in kubeRes['metadata'].keys():
+                    resLabels = kubeRes['metadata']['labels']
+                    if resLabels is None:
+                        print("%20s\t%40s\t%s" %(kubeKind, resName, "NonLabels"))
+                        continue
+                    labelPairs = resLabels.items()
+                    count = 0
+                    for labelPair in labelPairs:
+                        if count == 0:
+                            print("%20s\t%40s\t%s" %(kubeKind, resName, labelPair))   
+                        else:
+                            print("%20s\t%40s\t%s" %("", "", labelPair))   
+                        count = 1
+                print("%10s\t%40s\t%s" %("", "", "-"*30))
+            print('')
+        if kubeKind in kubeWorkloadList:                        
+            kubePodList = kubeResourceDicts[kubeKind]  
+            print("%s" %('-'*100))
+            print("%20s\t%40s\t%s" %("Kind", "Name", "Labels"))
+            print("%s" %('-'*100))           
+            for kubePod in kubePodList:           
+                containerNameStr = "" 
+                kubeWorkload = kubePod['kind']
+                kubeWorkloadName = kubePod['metadata']['name']
+                kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+                deploymentLabels = kubePod['metadata']['labels']
+                labelPairs = deploymentLabels.items()
+                count = 0
+                for labelPair in labelPairs:
+                    if count == 0:
+                        print("%20s\t%40s\t%s" %(kubeKind, kubeWorkloadName, labelPair))   
+                    else:
+                        print("%20s\t%40s\t%s" %("", "", labelPair))   
+                    count = 1
+
+                if 'metadata' not in kubePod['spec']['template'].keys():
+                    continue
+                podLabels = kubePod['spec']['template']['metadata']['labels']
+                labelPairs = podLabels.items()
+                count = 0
+                for labelPair in labelPairs:
+                    if count == 0:
+                        print("%20s\t%40s\t%s" %('Pod', kubeWorkloadName, labelPair))   
+                    else:
+                        print("%20s\t%40s\t%s" %("", "", labelPair))   
+                    count = 1 
+                print("%10s\t%40s\t%s" %("", "", "-"*30))
+                if deploymentLabels == podLabels:
+                    print("%10s\t%40s\t%s" %("", "", "workload label = pod label"))
+                else:
+                    print("%10s\t%40s\t%s" %("", "", "workload label != pod label"))
+                print('')              
+
+def show_volumes():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*100))
+        print("%30s\t%20s\t%s" %("Kind", "Name", "Volumes"))
+        print("%s" %('-'*100))               
+        for kubePod in kubePodList:          
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            if 'volumes' not in kubePod['spec']['template']['spec'].keys():
+                continue
+            podVolumes = kubePod['spec']['template']['spec']['volumes']
+            count = 0
+            for volume in podVolumes:
+                if count == 0:
+                    print("%30s\t%20s\t%s" %(kubeKind, kubeWorkloadName, volume))
+                else:
+                    print("%30s\t%20s\t%s" %("", "", volume))
+                count = 1
+            print("%30s\t%20s\t%s" %("", "", "-"*30))
+
+def show_affinity():
+    podHardAntiAffinityDicts = {}
+    podSoftAntiAffinityDicts = {}
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadDaemonList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*100))
+        print("%10s\t%10s\t%20s\t%50s\t%s" %("Kind", "Name", "Affinity Type", "hard/soft", "Affinity"))
+        print("%s" %('-'*100))               
+        for kubePod in kubePodList:          
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            if 'affinity' not in kubePod['spec']['template']['spec'].keys():
+                continue
+            affinityList = kubePod['spec']['template']['spec']['affinity']
+            count = 0
+            podHardAntiAffinityDicts[kubeWorkloadName] = "No"
+            podSoftAntiAffinityDicts[kubeWorkloadName] = "No"
+            for antiAffinityKey in affinityList.keys():
+                for antiAffinity in affinityList[antiAffinityKey].keys():
+                    if antiAffinity == 'requiredDuringSchedulingIgnoredDuringExecution':
+                        podHardAntiAffinityDicts[kubeWorkloadName] = 'Yes'
+                    if antiAffinity == 'preferredDuringSchedulingIgnoredDuringExecution':
+                        podSoftAntiAffinityDicts[kubeWorkloadName] = "Yes"
+                    condition = affinityList[antiAffinityKey][antiAffinity]
+                    if count == 0:
+                        print("%10s\t%10s\t%20s\t%50s\t%s" %(kubeKind, kubeWorkloadName, antiAffinityKey, antiAffinity, condition))
+                    else:
+                        print("%10s\t%10s\t%20s\t%50s\t%s" %("", "", "", "", condition))
+                    count = 1
+            print("%10s\t%10s\t%20s\t%50s\t%s" %("", "", "", "", "-"*30))
+    print("-"*30)   
+    print("%20s\t%50s\t%s" %("Name", "requiredDuringSchedulingIgnoredDuringExecution", 'preferredDuringSchedulingIgnoredDuringExecution'))     
+    for pod in podHardAntiAffinityDicts.keys():
+        print("%20s\t%50s\t%s" %(pod, podHardAntiAffinityDicts[pod], podSoftAntiAffinityDicts[pod]))
+
+def show_upgrade():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadDaemonList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*100))
+        print("%10s\t%20s\t%10s\t%s" %("Kind", "Name", "replicas", "Strategy"))
+        print("%s" %('-'*100))               
+        for kubePod in kubePodList:          
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            if 'replicas' not in kubePod['spec'].keys():
+                podReplicas = "default(1)"
+            else:
+                podReplicas = kubePod['spec']['replicas']
+            if kubeWorkload == 'StatefulSet':
+                strategy = kubePod['spec']['updateStrategy']
+            else:
+                strategy = kubePod['spec']['strategy']
+            print("%10s\t%20s\t%10s\t%s" %(kubeWorkload, kubeWorkloadName, podReplicas, strategy))
+        print("")
+
+def show_networks():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*100))
+        print("%10s\t%35s\t%s" %("Kind", "Name", "Networks"))
+        print("%s" %('-'*100))               
+        for kubePod in kubePodList:          
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName)
+            if 'metadata' not in kubePod['spec']['template'].keys():
+                networks = 'default(cluster)'
+            elif 'annotations' not in kubePod['spec']['template']['metadata'].keys():
+                networks = 'default(cluster)'
+            elif 'k8s.v1.cni.cncf.io/networks' not in kubePod['spec']['template']['metadata']['annotations'].keys():
+                networks = 'default(cluster)'
+            else:
+                networks = kubePod['spec']['template']['metadata']['annotations']['k8s.v1.cni.cncf.io/networks']
+            print("%10s\t%35s\t%s" %(kubeWorkload, kubeWorkloadName, networks))
+        print("")
+
+def show_others():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*100))      
+        print("%10s\t%35s\t%25s\t%25s\t%25s\t%s" %("Kind", "Name", "shareProcessNamespace", "restartPolicy", "priorityClassName", "serviceAccountName"))
+        print("%s" %('-'*100))               
+        for kubePod in kubePodList:          
+            kubeWorkload = kubePod['kind']
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName) 
+            shareProcessNamespace = "default(false)"
+            restartPolicy = "default(Always)"
+            serviceAccountName = "default"
+            priorityClassName = "default(0)"
+            if 'shareProcessNamespace' in kubePod['spec']['template']['spec'].keys():
+                shareProcessNamespace = kubePod['spec']['template']['spec']['shareProcessNamespace']
+            if 'restartPolicy' in kubePod['spec']['template']['spec'].keys():
+                restartPolicy = kubePod['spec']['template']['spec']['restartPolicy']
+            if 'serviceAccountName' in kubePod['spec']['template']['spec'].keys():
+                serviceAccountName = kubePod['spec']['template']['spec']['serviceAccountName']
+            if 'priorityClassName' in kubePod['spec']['template']['spec'].keys():
+                priorityClassName = kubePod['spec']['template']['spec']['priorityClassName']     
+            print("%10s\t%35s\t%25s\t%25s\t%25s\t%s" %(kubeWorkload, kubeWorkloadName, shareProcessNamespace, restartPolicy, priorityClassName, serviceAccountName))
+        print("")
+
+def show_images():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*120))
+        print("%10s\t%30s\t%25s\t%15s\t%s" %("kind", "Name", "Container", "Container Type", "imagePullPolicy"))
+        print("%s" %('-'*120))               
+        for kubePod in kubePodList:
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName) 
+            #print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            count = 0
+            for containerType in kubeWorkloadContainerTypeList:
+                if containerType in kubePod['spec']['template']['spec'].keys():
+                    kubeContainerList = kubePod['spec']['template']['spec'][containerType]
+                    for kubeContainer in kubeContainerList:
+                        containerName = kubeContainer['name']
+                        containerName = removeReleaseName(containerName)
+                        if 'imagePullPolicy' in kubeContainer.keys():
+                            imagePullPolicy = kubeContainer['imagePullPolicy']
+                        else:
+                            imagePullPolicy = 'default(Always)'
+                        if count == 0:
+                            print("%10s\t%30s\t%25s\t%15s\t%s" %(kubeKind, kubeWorkloadName, containerName, containerType, imagePullPolicy)) 
+                        else:
+                            print("%10s\t%30s\t%25s\t%15s\t%s" %("", "", containerName, containerType, imagePullPolicy))
+                        count = 1
+            print("%10s\t%30s\t%25s\t%15s\t%s" %("", "", "", "", "-"*20))
+        print("")
+
+def show_lifecycle():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind not in kubeWorkloadList:
+            continue
+        kubePodList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*120))
+        print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %("kind", "Name", "Container", "Container Type", "lifecycle", "Operations"))
+        print("%s" %('-'*120))               
+        for kubePod in kubePodList:
+            kubeWorkloadName = kubePod['metadata']['name']
+            kubeWorkloadName = removeReleaseName(kubeWorkloadName) 
+            #print("------------------------------------------" + kubeWorkload + ": " + kubeWorkloadName + "------------------------------------------")
+            count = 0
+            for containerType in kubeWorkloadContainerTypeList:
+                if containerType in kubePod['spec']['template']['spec'].keys():
+                    kubeContainerList = kubePod['spec']['template']['spec'][containerType]
+                    for kubeContainer in kubeContainerList:
+                        containerName = kubeContainer['name']
+                        containerName = removeReleaseName(containerName)
+                        if 'lifecycle' in kubeContainer.keys():
+                            lifecycle = kubeContainer['lifecycle']
+                        else:
+                            lifecycle = 'None'
+
+                        if lifecycle == 'None':
+                            if count == 0:
+                                print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %(kubeKind, kubeWorkloadName, containerName, containerType, lifecycle, "")) 
+                            else:
+                                print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %("", "", containerName, containerType, lifecycle, "")) 
+                            count = 1
+                        else:
+                            for prepost in lifecycle.keys():
+                                if count == 0:
+                                    print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %(kubeKind, kubeWorkloadName, containerName, containerType, prepost, lifecycle[prepost])) 
+                                else:
+                                    print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %("", "", containerName, containerType, prepost, lifecycle[prepost]))
+                                count = 1
+            print("%10s\t%30s\t%25s\t%15s\t%10s\t%s" %("", "", "", "", "", "-"*100))
+        print("")
+
+def show_services():
+    for kubeKind in kubeResourceDicts.keys():
+        if kubeKind != 'Service':
+            continue
+        kubeServiceList = kubeResourceDicts[kubeKind]
+        print("%s" %('-'*120))
+        print("%10s\t%30s\t%25s\t%20s\t%20s\t%s" %("kind", "Name", "Pod", "Type", "clusterIP", "publishNotReadyAddresses"))
+        print("%s" %('-'*120))               
+        for kubeService in kubeServiceList:
+            svcName = kubeService['metadata']['name']
+            svcName = removeReleaseName(svcName)
+            svcType = 'default(ClusterIP)'
+            svcClusterIP = 'default'
+            svcPublishNotReadyAddresses = 'default'
+            if 'type' in kubeService['spec'].keys():
+                svcType = kubeService['spec']['type']
+            if 'clusterIP' in kubeService['spec'].keys():
+                svcClusterIP = kubeService['spec']['clusterIP']
+            if 'publishNotReadyAddresses' in kubeService['spec'].keys():
+                svcPublishNotReadyAddresses = kubeService['spec']['publishNotReadyAddresses']
+            svcSelector = kubeService['spec']['selector']
+            podName = "None"
+            if 'app.kubernetes.io/name' in svcSelector.keys():
+                podName = svcSelector['app.kubernetes.io/name']
+            elif 'app' in svcSelector.keys():
+                podName = svcSelector['app']
+            if 'cnf.ce.nokia.com/role' in svcSelector.keys():
+                podName = podName + '-' + svcSelector['cnf.ce.nokia.com/role']
+            if 'type' in svcSelector.keys():
+                podName = podName + '-' + svcSelector['type']
+            if 'redisio_role' in svcSelector.keys():
+                podName = podName + '-' + svcSelector['redisio_role']
+            podName = removeReleaseName(podName)
+            print("%10s\t%30s\t%25s\t%20s\t%20s\t%s" %(kubeKind, svcName,  podName, svcType, svcClusterIP, svcPublishNotReadyAddresses))
+        print("")
 
 #print("Loadding " + chartsYamlFile)
 #Loading AUSF/UDM Manifests
@@ -357,5 +717,47 @@ elif sys.argv[1] == 'show_memory':
     show_memory()
 elif sys.argv[1] == 'show_disks':
     show_disks()
+elif sys.argv[1] == 'show_probes':
+    show_probes()
+elif sys.argv[1] == 'show_labels':
+    show_labels()
+elif sys.argv[1] == 'show_affinity':
+    show_affinity()
+elif sys.argv[1] == 'show_volumes':
+    show_volumes()
+elif sys.argv[1] == 'show_upgrade':   
+    show_upgrade()
+elif sys.argv[1] == 'show_networks':   
+    show_networks()
+elif sys.argv[1] == 'show_images':  
+    show_images()
+elif sys.argv[1] == 'show_lifecycle':  
+    show_lifecycle()
+elif sys.argv[1] == 'show_services': 
+    show_services()
+elif sys.argv[1] == 'show_others':  
+    show_others()
+elif sys.argv[1] == 'show_all':
+    show_kind_apiversion()
+    show_kube_resources()
+    show_securitycontext()
+    show_pdb()
+    show_role()
+    show_secret()
+    show_tolerations()
+    show_nodeselector()
+    show_cpus()
+    show_memory()
+    show_disks()
+    show_probes()
+    show_labels()
+    show_affinity()
+    show_volumes()
+    show_upgrade()
+    show_networks()
+    show_images()
+    show_lifecycle()
+    show_services()
+    show_others()
 else:
     chartparser_usage()
