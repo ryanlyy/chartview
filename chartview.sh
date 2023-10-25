@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-HELM_CHARTS_URL_ROOT=https://artifactory-blr1.int.net.nokia.com/artifactory/ims_pltf_local/
+HELM_CHARTS_URL_ROOT="chart url path"
 
 PUBLISH_ROOT_DIR=/var/www/html/ryliu/udm/chartview/
 
@@ -33,8 +33,6 @@ fi
 if [[ ! -d $CHART_TEMPLATE_DIR ]]; then 
 	mkdir $CHART_TEMPLATE_DIR
 fi
-
-#https://artifactory-blr1.int.net.nokia.com/artifactory/ims_pltf_local/23.11/5G_IMAGES/AUSF_UDM_NGCAL2311095.tar.gz
 
 list_helm_chart()
 {
